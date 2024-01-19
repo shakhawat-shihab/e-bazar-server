@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from "express";
 import { sendResponse } from "./utils/handleResponse";
-import HTTP_STATUS from "./constants/statusCodes";
+import HTTP_STATUS from "./constants/http/codes";
 import { databaseConnection } from "./config/database";
+import HTTP_MESSAGE from "./constants/http/messages";
+import RESPONSE_MESSAGE from "./constants/messages/responseMessages";
+import productRouter from "./routes/productRoutes";
 
 const express = require("express");
 const app = express();
@@ -14,17 +17,23 @@ app.use(express.json()); // Parses data as JSON
 app.use(express.text()); // Parses data as text
 app.use(express.urlencoded({ extended: true })); // Parses data as urlencoded
 
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+interface customError extends Error {
+  status?: number;
+}
+
+app.use((err: customError, req: Request, res: Response, next: NextFunction) => {
   console.log(err);
-  //   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
-  //     return sendResponse(
-  //       res,
-  //       STATUS_CODE.UNPROCESSABLE_ENTITY,
-  //       RESPONSE_MESSAGE.INVALID_JSON
-  //     );
-  //   }
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return sendResponse({
+      res: res,
+      statusCode: HTTP_STATUS.BAD_REQUEST,
+      message: RESPONSE_MESSAGE.INVALID_JSON,
+    });
+  }
   next();
 });
+
+app.use("/api/products", productRouter);
 
 app.get("/", async (req: Request, res: Response) => {
   return sendResponse({
