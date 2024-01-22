@@ -1,9 +1,19 @@
 import mongoose from "mongoose";
 
-interface ICart {
-  _id?: mongoose.Types.ObjectId;
-  learnerId: mongoose.Types.ObjectId;
-  courseList: mongoose.Types.ObjectId[];
+interface IProductList {
+  productId: mongoose.Types.ObjectId;
+  quantity: number;
 }
 
-export default ICart;
+interface ICart {
+  _id?: mongoose.Types.ObjectId;
+  userId: mongoose.Types.ObjectId;
+  productList: IProductList[];
+}
+
+interface ICartParameter {
+  userId: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
+}
+
+export { ICart, ICartParameter, IProductList };

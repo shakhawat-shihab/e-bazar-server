@@ -1,19 +1,27 @@
 import mongoose, { Schema, Document } from "mongoose";
-import ICart from "../interfaces/carts/cartInterface";
+import { ICart, IProductList } from "../interfaces/carts/cartInterface";
 
 const cartSchema: Schema<ICart> = new mongoose.Schema<ICart>(
   {
-    // userId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "users",
-    //   required: true,
-    // },
-    productList: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "courses",
-      },
-    ],
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      // ref: "users",
+      required: true,
+    },
+
+    productList: {
+      type: [
+        {
+          productId: {
+            type: mongoose.Types.ObjectId,
+            // ref:"products",
+            required: true,
+          },
+          quantity: { type: Number, required: true },
+        },
+      ],
+      required: true,
+    },
   },
   {
     timestamps: true,

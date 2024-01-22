@@ -7,7 +7,7 @@ import ProductRepository from "../repositories/productRepository";
 
 class ProductService {
   static async getProducts(): Promise<IResponse> {
-    const product = await ProductRepository.findProducts();
+    const product = await ProductRepository.getProducts();
     if (!product) {
       return {
         success: false,

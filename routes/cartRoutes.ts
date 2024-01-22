@@ -1,8 +1,14 @@
 import { Router } from "express";
+const express = require("express");
 import CartController from "../controllers/cartController";
+import { cartValidator } from "../middleware/cart/cartValidator";
 
-const productRouter = Router();
+const cartRouter = Router();
 
-productRouter.patch("/add-to-cart", CartController.addToCart);
+cartRouter.patch(
+  "/add-to-cart",
+  cartValidator.addToCartValidator,
+  CartController.addToCart
+);
 
-export default productRouter;
+export default cartRouter;

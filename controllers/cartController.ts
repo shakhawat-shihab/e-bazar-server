@@ -3,20 +3,34 @@ import HTTP_STATUS from "../constants/http/codes";
 import HTTP_MESSAGE from "../constants/http/messages";
 import RESPONSE_MESSAGE from "../constants/messages/responseMessages";
 import { sendResponse } from "../utils/handleResponse";
-import ProductModel from "../models/products";
-import ProductService from "../services/productService";
+import CartService from "../services/cartService";
+import { validationResult } from "express-validator";
 
 class CartController {
   static async addToCart(req: Request, res: Response) {
     try {
+      const validation = validationResult(req).array();
+      if (validation.length > 0) {
+        return sendResponse({
+          res: res,
+          statusCode: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          message: HTTP_MESSAGE.UNPROCESSABLE_ENTITY,
+          result: validation,
+        });
+      }
+
       const { productId, userId } = req.body;
-      const result = await ProductService.getProducts();
+
+      const result = await CartService.addToCart({
+        productId: productId,
+        userId: userId,
+      });
 
       if (result.success) {
         return sendResponse({
           res: res,
           statusCode: HTTP_STATUS.OK,
-          message: RESPONSE_MESSAGE.GET_ALL_PRODUCT,
+          message: RESPONSE_MESSAGE.CART_SUCCESS,
           result: result.data,
         });
       } else {
