@@ -4,15 +4,25 @@ import HTTP_MESSAGE from "../constants/http/messages";
 import RESPONSE_MESSAGE from "../constants/messages/responseMessages";
 import IResponse from "../interfaces/http/responseInterface";
 import CartRepository from "../repositories/cartRepository";
-import { ICart, ICartParameter } from "../interfaces/carts/cartInterface";
+import { ICart, ICartParameter } from "../interfaces/cart/cartInterface";
 
 class CartService {
   static async addToCart(cartParameter: ICartParameter): Promise<IResponse> {
+    //check user
+
     // find Cart by userId
     let result = await CartRepository.getCartByUserId(cartParameter?.userId);
 
     //cart exist so update in cart
     if (result) {
+      const isExistProduct = await CartRepository.findProductFromCart(
+        cartParameter
+      );
+      if (isExistProduct) {
+        CartRepository?.increaseProductCountInCart(cartParameter);
+      } else {
+        CartRepository?.addProductToCart(cartParameter);
+      }
     }
 
     //cart is not exist create cart
@@ -32,27 +42,20 @@ class CartService {
           success: true,
           data: result,
         };
+      } else {
+        return {
+          success: false,
+          error: {
+            error_code: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+            error_message: HTTP_MESSAGE.UNPROCESSABLE_ENTITY,
+          },
+        };
       }
-      // else{
-      //   return {
-      //     success: false,
-
-      //   };
-      // }
     }
 
-    // if (!result) {
-    //   return {
-    //     success: false,
-    //     error: {
-    //       error_code: HTTP_STATUS.NOT_FOUND,
-    //       error_message: HTTP_MESSAGE.NOT_FOUND,
-    //     },
-    //   };
-    // }
     return {
       success: true,
-      // data: product,
+      message: RESPONSE_MESSAGE.CART_SUCCESS,
     };
   }
 }

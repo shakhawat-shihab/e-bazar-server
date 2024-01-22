@@ -9,6 +9,7 @@ interface ICart {
   _id?: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
   productList: IProductList[];
+  total?: Number;
 }
 
 interface ICartParameter {

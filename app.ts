@@ -6,6 +6,7 @@ import HTTP_MESSAGE from "./constants/http/messages";
 import RESPONSE_MESSAGE from "./constants/messages/responseMessages";
 import productRouter from "./routes/productRoutes";
 import cartRouter from "./routes/cartRoutes";
+import userRouter from "./routes/userRoute";
 
 const express = require("express");
 const app = express();
@@ -36,6 +37,7 @@ app.use((err: customError, req: Request, res: Response, next: NextFunction) => {
 
 app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
+app.use("/api/user", userRouter);
 
 app.get("/", async (req: Request, res: Response) => {
   return sendResponse({
