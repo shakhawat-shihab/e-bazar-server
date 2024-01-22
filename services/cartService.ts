@@ -5,25 +5,46 @@ import RESPONSE_MESSAGE from "../constants/messages/responseMessages";
 import IResponse from "../interfaces/http/responseInterface";
 import CartRepository from "../repositories/cartRepository";
 import { ICart, ICartParameter } from "../interfaces/cart/cartInterface";
+import ProductRepository from "../repositories/productRepository";
 
 class CartService {
   static async addToCart(cartParameter: ICartParameter): Promise<IResponse> {
-    //check user
+    //check product
+    let product = await ProductRepository.getProductById(
+      cartParameter?.productId
+    );
+
+    if (!product?.stock) {
+      return {
+        success: false,
+        message: RESPONSE_MESSAGE.UNAVAILABLE_PRODUCT,
+        error: {
+          error_code: HTTP_STATUS.UNPROCESSABLE_ENTITY,
+          error_message: HTTP_MESSAGE.UNPROCESSABLE_ENTITY,
+        },
+      };
+    }
 
     // find Cart by userId
     let cart = await CartRepository.getCartByUserId(cartParameter?.userId);
 
     //cart exist so update in cart
     if (cart) {
-      const isExistProduct = await CartRepository.findProductFromCart(
+      const isExistProductInCart = await CartRepository.findProductFromCart(
         cartParameter
       );
       let updateCartResult;
-      if (isExistProduct) {
-        console.log("ewr")
-        updateCartResult=await CartRepository.increaseProductCountInCart(cartParameter);
+      if (isExistProductInCart) {
+        console.log("ewr");
+        updateCartResult = await CartRepository.increaseProductCountInCart(
+          cartParameter,
+          product.price
+        );
       } else {
-        updateCartResult=await CartRepository.addProductToCart(cartParameter);
+        updateCartResult = await CartRepository.addProductToCart(
+          cartParameter,
+          product.price
+        );
       }
 
       return {
@@ -42,6 +63,7 @@ class CartService {
             quantity: 1,
           },
         ],
+        total: product?.price,
       };
       const cartCreateResult = await CartRepository.createCart(newCart);
       if (cartCreateResult) {
@@ -58,51 +80,62 @@ class CartService {
           },
         };
       }
-    }   
+    }
   }
 
-  static async removeFromCart(cartParameter: ICartParameter): Promise<IResponse> {
-    //check user
+  static async removeFromCart(
+    cartParameter: ICartParameter
+  ): Promise<IResponse> {
+    //check product
+    let product = await ProductRepository.getProductById(
+      cartParameter?.productId
+    );
 
     // find Cart by userId
-    const isExistProduct = await CartRepository.findProductFromCart(
+    const isExistProductInCart = await CartRepository.findProductFromCart(
       cartParameter
     );
 
-    // console.log("isExistProduct ",isExistProduct)
+    // console.log("isExistProductInCart ",isExistProductInCart)
 
     //check if product exist
-    if (isExistProduct) {
-      // console.log("isExistProduct ",isExistProduct)
+    if (isExistProductInCart && product) {
+      // console.log("isExistProductInCart ",isExistProductInCart)
       let quantity;
-      isExistProduct?.productList?.forEach(product=>{
-        if(product?.productId==cartParameter?.productId && product?.quantity==1){
-          console.log("inside ",product?.productId )
-          quantity=1;
+      isExistProductInCart?.productList?.forEach((product) => {
+        if (
+          product?.productId == cartParameter?.productId &&
+          product?.quantity == 1
+        ) {
+          // console.log("inside ", product?.productId);
+          quantity = 1;
         }
-      })
+      });
       let updateCartResult;
-      if(quantity==1){
-        updateCartResult=await CartRepository.removeProductFromCart(cartParameter);
-      }
-      else{
-        updateCartResult= await CartRepository.decreaseProductCountInCart(cartParameter);
+      if (quantity == 1) {
+        updateCartResult = await CartRepository.removeProductFromCart(
+          cartParameter,
+          product.price
+        );
+      } else {
+        updateCartResult = await CartRepository.decreaseProductCountInCart(
+          cartParameter,
+          product.price
+        );
       }
 
-      if(updateCartResult){
+      if (updateCartResult) {
         return {
           success: true,
           message: RESPONSE_MESSAGE.REMOVED_FROM_CART,
-          data:updateCartResult
+          data: updateCartResult,
         };
-      }
-      else{
+      } else {
         return {
           success: false,
           message: RESPONSE_MESSAGE.ADDED_TO_CART_FAILED,
         };
       }
-      
     }
     //product is not exist
     else {
@@ -114,10 +147,12 @@ class CartService {
           error_message: HTTP_MESSAGE.NOT_FOUND,
         },
       };
-    }   
+    }
   }
 
-  static async getCartByUserId(userId: mongoose.Types.ObjectId): Promise<IResponse> {
+  static async getCartByUserId(
+    userId: mongoose.Types.ObjectId
+  ): Promise<IResponse> {
     // find Cart by userId
     let cart = await CartRepository.getCartByUserId(userId);
 
@@ -138,10 +173,8 @@ class CartService {
           error_message: HTTP_MESSAGE.NOT_FOUND,
         },
       };
-    }   
+    }
   }
-
-
 }
 
 export default CartService;

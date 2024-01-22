@@ -50,7 +50,6 @@ class CartController {
     }
   }
 
-
   static async removeFromCart(req: Request, res: Response) {
     try {
       const validation = validationResult(req).array();
@@ -96,7 +95,6 @@ class CartController {
     }
   }
 
-
   static async getCartByUserId(req: Request, res: Response) {
     try {
       const validation = validationResult(req).array();
@@ -111,9 +109,7 @@ class CartController {
 
       const { userId } = req.body;
 
-      const result = await CartService.getCartByUserId(
-        userId
-      );
+      const result = await CartService.getCartByUserId(userId);
 
       if (result.success) {
         return sendResponse({
@@ -138,8 +134,6 @@ class CartController {
       });
     }
   }
-
-
 }
 
 export default CartController;

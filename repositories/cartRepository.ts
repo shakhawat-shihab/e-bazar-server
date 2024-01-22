@@ -3,7 +3,6 @@ import CartModel from "../models/cart";
 import { ICart, ICartParameter } from "../interfaces/cart/cartInterface";
 
 class CartRepository {
-
   static async getCartByUserId(
     userId: mongoose.Types.ObjectId
   ): Promise<ICart | null> {
@@ -24,7 +23,8 @@ class CartRepository {
   }
 
   static async addProductToCart(
-    cartData: ICartParameter
+    cartData: ICartParameter,
+    price: number
   ): Promise<ICart | null> {
     return await CartModel.findOneAndUpdate(
       { userId: cartData?.userId },
@@ -35,14 +35,17 @@ class CartRepository {
             quantity: 1,
           },
         },
-      }
-      ,
+        $inc: {
+          total: price,
+        },
+      },
       { new: true }
     ).exec();
   }
 
   static async increaseProductCountInCart(
-    cartData: ICartParameter
+    cartData: ICartParameter,
+    price: number
   ): Promise<ICart | null> {
     return await CartModel.findOneAndUpdate(
       {
@@ -52,6 +55,7 @@ class CartRepository {
       {
         $inc: {
           "productList.$.quantity": 1,
+          total: price,
         },
       },
       { new: true }
@@ -59,9 +63,9 @@ class CartRepository {
   }
 
   static async decreaseProductCountInCart(
-    cartData: ICartParameter
+    cartData: ICartParameter,
+    price: number
   ): Promise<ICart | null> {
-    
     return await CartModel.findOneAndUpdate(
       {
         userId: cartData?.userId,
@@ -70,15 +74,16 @@ class CartRepository {
       {
         $inc: {
           "productList.$.quantity": -1,
+          total: -price,
         },
-      }
-      ,
+      },
       { new: true }
-    ).exec(); 
+    ).exec();
   }
 
   static async removeProductFromCart(
-    cartData: ICartParameter
+    cartData: ICartParameter,
+    price: number
   ): Promise<ICart | null> {
     return await CartModel.findOneAndUpdate(
       { userId: cartData?.userId },
@@ -88,12 +93,13 @@ class CartRepository {
             productId: cartData?.productId,
           },
         },
-      }
-      ,
+        $inc: {
+          total: -price,
+        },
+      },
       { new: true }
     ).exec();
   }
-
 }
 
 export default CartRepository;
