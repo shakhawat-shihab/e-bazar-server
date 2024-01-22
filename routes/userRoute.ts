@@ -1,14 +1,15 @@
 import { Router } from "express";
 const express = require("express");
-import CartController from "../controllers/cartController";
+
 import { cartValidator } from "../middleware/cart/cartValidator";
+import UserController from "../controllers/userController";
 
 const userRouter = Router();
 
 userRouter.post(
   "/log-in",
   cartValidator.addToCartValidator,
-  CartController.addToCart
+  UserController.logIn
 );
 
 export default userRouter;
