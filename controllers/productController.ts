@@ -10,6 +10,7 @@ class ProductController {
   static async getProducts(req: Request, res: Response) {
     try {
       const result = await ProductService.getProducts();
+      console.log(result)
 
       if (result.success) {
         return sendResponse({

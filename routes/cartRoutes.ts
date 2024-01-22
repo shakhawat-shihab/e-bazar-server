@@ -11,4 +11,15 @@ cartRouter.patch(
   CartController.addToCart
 );
 
+cartRouter.patch(
+  "/remove-from-cart",
+  cartValidator.addToCartValidator,
+  CartController.removeFromCart
+);
+
+cartRouter.get(
+  "/view",
+  CartController.getCartByUserId
+);
+
 export default cartRouter;

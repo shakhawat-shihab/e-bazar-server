@@ -25,7 +25,7 @@ const cartSchema: Schema<ICart> = new mongoose.Schema<ICart>(
 
     total: {
       type: Number,
-      required: true,
+  
     },
   },
   {

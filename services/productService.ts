@@ -8,6 +8,7 @@ import ProductRepository from "../repositories/productRepository";
 class ProductService {
   static async getProducts(): Promise<IResponse> {
     const product = await ProductRepository.getProducts();
+    console.log("productService ",product)
     if (!product) {
       return {
         success: false,
