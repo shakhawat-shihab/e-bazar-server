@@ -29,8 +29,10 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.1.0",
     "nodemon": "^3.0.3",
+    "sslcommerz-lts": "^1.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

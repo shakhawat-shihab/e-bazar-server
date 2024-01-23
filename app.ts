@@ -8,6 +8,7 @@ import productRouter from "./routes/productRoutes";
 import cartRouter from "./routes/cartRoutes";
 import userRouter from "./routes/userRoute";
 import authRouter from "./routes/authRoute";
+import sslRouter from "./routes/sslRoute";
 
 const express = require("express");
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/products", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/payment", sslRouter);
 
 app.get("/", async (req: Request, res: Response) => {
   return sendResponse({

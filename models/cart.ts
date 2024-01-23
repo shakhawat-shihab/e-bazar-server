@@ -5,7 +5,7 @@ const cartSchema: Schema<ICart> = new mongoose.Schema<ICart>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "user",
       required: true,
     },
 
@@ -14,7 +14,7 @@ const cartSchema: Schema<ICart> = new mongoose.Schema<ICart>(
         {
           productId: {
             type: mongoose.Types.ObjectId,
-            ref: "products",
+            ref: "product",
             required: true,
           },
           quantity: { type: Number, required: true },
@@ -25,7 +25,6 @@ const cartSchema: Schema<ICart> = new mongoose.Schema<ICart>(
 
     total: {
       type: Number,
-  
     },
   },
   {

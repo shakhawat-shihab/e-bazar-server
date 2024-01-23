@@ -17,9 +17,6 @@ cartRouter.patch(
   CartController.removeFromCart
 );
 
-cartRouter.get(
-  "/view",
-  CartController.getCartByUserId
-);
+cartRouter.patch("/view", CartController.getCartByUserId);
 
 export default cartRouter;

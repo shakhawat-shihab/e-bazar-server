@@ -154,7 +154,10 @@ class CartService {
     userId: mongoose.Types.ObjectId
   ): Promise<IResponse> {
     // find Cart by userId
+    // console.log("cart  --- ");
     let cart = await CartRepository.getCartByUserId(userId);
+
+    // console.log("cart ", cart);
 
     //cart exist
     if (cart) {

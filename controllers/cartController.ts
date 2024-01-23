@@ -109,6 +109,8 @@ class CartController {
 
       const { userId } = req.body;
 
+      console.log("userId ------------------ ", userId);
+
       const result = await CartService.getCartByUserId(userId);
 
       if (result.success) {
@@ -126,7 +128,7 @@ class CartController {
         });
       }
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       return sendResponse({
         res: res,
         statusCode: HTTP_STATUS.INTERNAL_SERVER_ERROR,

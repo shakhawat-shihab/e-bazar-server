@@ -1,12 +1,15 @@
 import mongoose from "mongoose";
 import CartModel from "../models/cart";
 import { ICart, ICartParameter } from "../interfaces/cart/cartInterface";
+import { populate } from "dotenv";
 
 class CartRepository {
   static async getCartByUserId(
     userId: mongoose.Types.ObjectId
   ): Promise<ICart | null> {
-    return await CartModel.findOne({ userId: userId }).exec();
+    return await CartModel.findOne({ userId: userId })
+      .populate({ path: "productList.productId", model: "product" })
+      .exec();
   }
 
   static async findProductFromCart(
